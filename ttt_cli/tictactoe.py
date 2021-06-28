@@ -103,38 +103,35 @@ class TicTacToe:
         return None
 
     def __check_win(self, mark):
-        win_row = [0,0,0]
-        win_col = [0,0,0]
-        
-        # row check
-        for i in range(3):
-            for j in range(3):
-                if(self.__game_board[i][j] == mark):
-                    win_row[i] += 3
-        
-        for i in range(3):
-            if win_row[i] == 9:
-                return mark
-        
-        # col check
-        for i in range(3):
-            for j in range(3):
-                if(self.__game_board[i][j] == mark):
-                    win_col[j] += 4
-        
-        for i in range(3):
-            if win_col[i] == 12:
-                return mark
-        
         reverse_game_board = list([row for row in reversed(self.__game_board)])
-        if self.__check_diagonal_win(self.__game_board, mark):
+        if(
+            self.__check_row_column(mark, row=True) or
+            self.__check_row_column(mark) or
+            self.__check_diagonal_win(mark) or
+            self.__check_diagonal_win(mark, reverse_game_board)
+        ):
             return mark
-        if self.__check_diagonal_win(reverse_game_board, mark):
-            return mark        
         return False
     
-    def __check_diagonal_win(self, board, mark):
+    def __check_row_column(self, mark, row=False):
+        win_row_column = [0,0,0]
+        for i in range(3):
+            for j in range(3):
+                if(self.__game_board[i][j] == mark):
+                    if row:
+                        win_row_column[i] += 1
+                    else:
+                        win_row_column[j] += 1
+        
+        for i in range(3):
+            if win_row_column[i] == 3:
+                return mark
+        return False
+    
+    def __check_diagonal_win(self, mark, board=None):
         diag = 0
+        if not board:
+            board = self.__game_board
         for i in range(3):
             for j in range(3):
                 if (i != j):
